@@ -1,5 +1,5 @@
 #include <iostream>
-#include "glad/gl.h"
+#include  "glad/gl.h"
 #include "GLFW/glfw3.h"
 // #include "GLFW/glfw3.h"
 #include "plane.h"
@@ -14,33 +14,7 @@
 int main()
 {
 
-    // initializing glad
 
-    // glfwInit();
-
-    // glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    // glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    // glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-    // GLFWwindow *window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
-    // if (window == NULL)
-    // {
-    //     std::cout << "Failed to create GLFW window" << std::endl;
-    //     glfwTerminate();
-    //     return -1;
-    // }
-
-    // glfwMakeContextCurrent(window);
-    // glfwSetFramebufferSizeCallback(window, frameBufferCallback);
-
-    // if (!gladLoadGL(glfwGetProcAddress))
-    // {
-    //     std::cout << "Failed to initialize GLAD" << std::endl;
-    //     return -1;
-    // }
-    // glEnable(GL_DEPTH_TEST);
-    // glEnable(GL_BLEND);
-    // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     Game game = Game();
 
     Shader shader = Shader("shaders/main.vs", "shaders/main.fs");

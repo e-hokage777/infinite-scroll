@@ -17,10 +17,11 @@ public:
     unsigned int height;
     std::vector<Drawable *> drawables = {};
 
-    Scene(int width = WIDTH, int height = HEIGHT)
+    Scene(int width = SCENE_WIDTH, int height = SCENE_HEIGHT)
     {
         this->width = width;
         this->height = height;
+        init();
     }
 
     void add(Drawable *drawable)
@@ -31,7 +32,7 @@ public:
     void render(Shader shader)
     {
         glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);
-        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
+        glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         for (auto drawable : drawables)
         {
@@ -42,9 +43,12 @@ public:
 
     void draw()
     {
+        glDisable(GL_DEPTH_TEST);
+        this->shader.use();
         glBindVertexArray(this->VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
+        glEnable(GL_DEPTH_TEST);
     }
 
 private:
@@ -64,13 +68,18 @@ private:
         // creating framebuffer color texture
         glGenTextures(1, &this->colorTexture);
         glBindTexture(GL_TEXTURE_2D, this->colorTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_TEXTURE_2D, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         // creating depth buffer texture
+        // TODO: change this to RBO later
         glGenTextures(1, &this->depthStencilTexture);
         glBindTexture(GL_TEXTURE_2D, this->depthStencilTexture);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_STENCIL, this->width, this->height, 0, GL_DEPTH_STENCIL, GL_TEXTURE_2D, NULL);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, this->width, this->height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
         glBindTexture(GL_TEXTURE_2D, 0);
 
         //// creating and initializing framebuffer
@@ -90,10 +99,12 @@ private:
             Logger::info("SUCCESS: Render Framebuffer setup");
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindTexture(GL_TEXTURE_2D, 0);
 
         // setting up for drawing plane
         glCreateVertexArrays(1, &this->VAO);
-        glCreateBuffers(1, &this->VBO);
+        glGenBuffers(1, &this->VBO);
+        glGenBuffers(1, &this->EBO);
 
         // setting up vertex buffer
         float vertices[] = {
@@ -141,11 +152,12 @@ private:
         glEnableVertexAttribArray(1);
 
         // ebo
-        //TODO: check here well, might need to move data inside vao
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+        // TODO: check here well, might need to move data inside vao
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+        // glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
         glBindVertexArray(0);
 
-            // setting up shader
-            this->shader = Shader("shaders/screen.vs", "shader/screen.fs");
+        // setting up shader
+        this->shader = Shader("shaders/scene.vs", "shaders/scene.fs");
     }
 };

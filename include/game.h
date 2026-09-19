@@ -60,6 +60,7 @@ public:
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             // draw logic comes here
             scene.render(shader);
+            scene.draw();
             glfwSwapBuffers(this->window);
             glfwPollEvents();
         }
