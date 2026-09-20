@@ -52,14 +52,14 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void render(Scene scene, Shader shader)
+    void render(Scene scene)
     {
         while (!glfwWindowShouldClose(this->window))
         {
-            glClearColor(0.7f, 0.3f, 0.3f, 1.0f);
+            glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             // draw logic comes here
-            scene.render(shader);
+            scene.render();
             scene.draw();
             glfwSwapBuffers(this->window);
             glfwPollEvents();

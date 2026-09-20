@@ -5,70 +5,113 @@
 #include "glad/gl.h"
 #include "stb_image.h"
 #include "shader.h"
-#include "plane.h"
 #include "drawable.h"
+#include "texture.h"
 
-class Sprite: public Drawable
+class Sprite : public Drawable
 {
 public:
-    unsigned int texture = 0;
+    Texture texture;
     unsigned int states = 0;
     unsigned int maxFrames = 0;
     unsigned int stateIndex = 0;
     unsigned int frameIndex = 0;
+    float xOffset = 0.0f;
+    float yOffset = 0.0f;
+    float spriteWidth;
+    float spriteHeight;
     Plane plane;
 
-    Sprite(std::string path, unsigned int states)
+    Sprite(std::string path, unsigned int states, unsigned int maxFrames)
         : plane(1.0f, 1.0f)
     {
         this->states = states;
-        initializeSprite(path);
+        this->maxFrames = maxFrames;
+        this->spriteWidth = 1.0f / maxFrames;
+        this->spriteHeight = 1.0f / states;
         this->stateIndex = 0;
         this->frameIndex = 0;
-        this->maxFrames = 0;
+
+        initializeSprite(path);
     }
 
     void Draw(Shader shader)
     {
+        this->update(0.0f);
         shader.use();
-        shader.setTexUnit(0, this->texture, "spriteSampler", GL_TEXTURE_2D);
-        this->plane.Draw(shader);
+        shader.setTexUnit(0, this->texture.ID, "sampler", GL_TEXTURE_2D);
+        shader.setFloat("xOffset", this->xOffset);
+        shader.setFloat("yOffset", this->yOffset);
+        // shader.setFloat("width", this->spriteWidth);
+        // shader.setFloat("height", this->spriteHeight);
+        glBindVertexArray(this->VAO);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        glBindVertexArray(0);
+    }
+
+    void update(float deltaTime)
+    {
+        this->stateIndex = 8;
+        this->frameIndex = (this->frameIndex + 1) % 7;
+        this->xOffset = this->frameIndex * this->spriteWidth;
+        this->yOffset = this->stateIndex * this->spriteHeight;
     }
 
 private:
+    unsigned int VAO;
+    unsigned int VBO;
+    unsigned int EBO;
+
     void initializeSprite(std::string path)
     {
-        // loading image
-        int width, height, nrChannels;
-        stbi_set_flip_vertically_on_load(true);
-        unsigned char *data = stbi_load(path.c_str(), &width, &height, &nrChannels, 0);
+        // define texture
+        this->texture = Texture(path.c_str(), false);
 
+        // create plane
+        // defining vertices
+        // float vertices[] = {
+        //     // should should be vercies of a plane
+        //     -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // top left
+        //     1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // top right
+        //     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
+        //     1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f   // bottom right
+        // };
+        float vertices[] = {
+            // should should be vercies of a plane
+            -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset,                                         // top left
+            1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset,                      // top right
+            -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset + this->spriteHeight,                   // bottom left
+            1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset + this->spriteHeight // bottom right
+        };
 
-        if (data == nullptr)
-        {
-            std::cout << "Failed to load texture: " << path << std::endl;
-            return;
-        }
+        int indices[] = {
+            0, 1, 3,
+            0, 2, 3};
 
+        glGenVertexArrays(1, &this->VAO);
+        glGenBuffers(1, &this->VBO);
+        glGenBuffers(1, &this->EBO);
 
-        GLenum format = GL_RGB;
-        if (nrChannels == 1)
-            format = GL_RED;
-        else if (nrChannels == 3)
-            format = GL_RGB;
-        else if (nrChannels == 4)
-            format = GL_RGBA;
+        glBindVertexArray(this->VAO);
+        glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 
-        // creating the texture
-        glGenTextures(1, &this->texture);
-        glBindTexture(GL_TEXTURE_2D, this->texture);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_UNSIGNED_BYTE, data);
-        glBindTexture(GL_TEXTURE_2D, 0);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
 
-        stbi_image_free(data);
+        // vertex positions
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (sizeof(float) * 8), (void *)0);
+        // vertex normals
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (sizeof(float) * 8), (void *)(sizeof(float) * 3));
+        // vertex texture coords
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, TexCoords));
+
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_STATIC_DRAW);
+
+        glBindVertexArray(0);
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 };

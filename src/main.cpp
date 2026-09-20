@@ -18,28 +18,16 @@ int main()
     Game game = Game();
 
     Shader shader = Shader("shaders/main.vs", "shaders/main.fs");
+    Shader spriteShader = Shader("shaders/sprite.vs", "shaders/sprite.fs");
     Plane plane = Plane(1.0f, 1.0f);
-    Sprite sprite = Sprite("assets/shadow_dog.png", 4);
+    Sprite sprite = Sprite("assets/shadow_dog.png", 10,12);
 
     // creating scene
     Scene scene = Scene();
     // scene.add(&plane);
-    scene.add(&sprite);
+    scene.add({&sprite, spriteShader});
 
-    // while (!glfwWindowShouldClose(window))
-    // {
-    //     glClearColor(0.0f, 0.5f, 0.0f, 1.0f);
-    //     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-    //     shader.use();
-
-    //     sprite.draw(shader);
-
-    //     glfwPollEvents();
-    //     glfwSwapBuffers(window);
-    // }
-
-    game.render(scene, shader);
+    game.render(scene);
 
     return 0;
 }

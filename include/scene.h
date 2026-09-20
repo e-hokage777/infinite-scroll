@@ -10,12 +10,18 @@
 int SCENE_WIDTH = 800;
 int SCENE_HEIGHT = 600;
 
+struct SceneObject
+{
+    Drawable *drawable;
+    Shader shader;
+};
+
 class Scene
 {
 public:
     unsigned int width;
     unsigned int height;
-    std::vector<Drawable *> drawables = {};
+    std::vector<SceneObject> objects = {};
 
     Scene(int width = SCENE_WIDTH, int height = SCENE_HEIGHT)
     {
@@ -24,20 +30,22 @@ public:
         init();
     }
 
-    void add(Drawable *drawable)
+    void add(SceneObject object)
     {
-        drawables.push_back(drawable);
+        objects.push_back(object);
     }
 
-    void render(Shader shader)
+    void render()
     {
         glBindFramebuffer(GL_FRAMEBUFFER, this->framebuffer);
-        glClearColor(1.0f, 0.0f, 1.0f, 1.0f);
+        glClearColor(0.0f, 0.0f, 1.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        for (auto drawable : drawables)
+        for (auto object : objects)
         {
-            drawable->Draw(shader);
+            object.drawable->Draw(object.shader);
         }
+        glBindBuffer(GL_DRAW_FRAMEBUFFER, 0);
+        glBindBuffer(GL_READ_FRAMEBUFFER, 0);
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -45,6 +53,7 @@ public:
     {
         glDisable(GL_DEPTH_TEST);
         this->shader.use();
+        this->shader.setTexUnit(0, this->colorTexture, "textureSampler", GL_TEXTURE_2D);
         glBindVertexArray(this->VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
