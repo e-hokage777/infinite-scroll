@@ -23,7 +23,8 @@ public:
     unsigned int height;
     std::vector<SceneObject> objects = {};
 
-    Scene(int width = SCENE_WIDTH, int height = SCENE_HEIGHT)
+    Scene(){};
+    Scene(int width ,int height)
     {
         this->width = width;
         this->height = height;

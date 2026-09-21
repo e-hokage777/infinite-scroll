@@ -10,7 +10,7 @@ float lastFrame = 0;
 float deltaTime = 0;
 // TODO: see if you can make this a class member
 void framebufferSizeCallback(GLFWwindow *window, int width, int height)
-{ 
+{
     glViewport(0, 0, width, height);
 }
 
