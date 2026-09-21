@@ -60,10 +60,26 @@ public:
         glEnable(GL_DEPTH_TEST);
     }
 
-    void update(float deltaTime){
-        for (auto object : objects){
+    void update(float deltaTime)
+    {
+        for (auto object : objects)
+        {
             object.drawable->Update(deltaTime);
         }
+    }
+
+    void resize(int width, int height)
+    {
+        this->width = width;
+        this->height = height;
+
+        glBindTexture(GL_TEXTURE_2D, this->colorTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, this->width, this->height, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
+
+        glBindTexture(GL_TEXTURE_2D, this->depthStencilTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, this->width, this->height, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 
 private:

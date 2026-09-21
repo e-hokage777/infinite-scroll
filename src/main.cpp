@@ -11,11 +11,14 @@
 //     glViewport(0, 0, width, height);
 // }
 
+int SCREEN_WIDTH = 800;
+int SCREEN_HEIGHT = 600;
+
 int main()
 {
 
 
-    Game game = Game();
+    Game game = Game(SCREEN_WIDTH, SCREEN_HEIGHT);
 
     Shader shader = Shader("shaders/main.vs", "shaders/main.fs");
     Shader spriteShader = Shader("shaders/sprite.vs", "shaders/sprite.fs");
@@ -23,11 +26,11 @@ int main()
     Sprite sprite = Sprite("assets/shadow_dog.png", 10,12);
 
     // creating scene
-    Scene scene = Scene();
+    Scene scene = Scene(SCREEN_WIDTH, SCREEN_HEIGHT);
     // scene.add(&plane);
     scene.add({&sprite, spriteShader});
-
-    game.render(scene);
+    game.add(&scene);
+    game.render();
 
     return 0;
 }

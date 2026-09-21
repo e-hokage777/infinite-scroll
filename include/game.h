@@ -1,4 +1,6 @@
 #pragma once
+
+#include <vector>
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
 #include "logger.h"
@@ -8,7 +10,7 @@ float lastFrame = 0;
 float deltaTime = 0;
 // TODO: see if you can make this a class member
 void framebufferSizeCallback(GLFWwindow *window, int width, int height)
-{
+{ 
     glViewport(0, 0, width, height);
 }
 
@@ -55,27 +57,36 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void render(Scene scene)
+    void render()
     {
         while (!glfwWindowShouldClose(this->window))
         {
-            deltaTime = glfwGetTime() - lastFrame;
-            lastFrame = glfwGetTime();
+            deltaTime = (float)(glfwGetTime() - lastFrame);
+            lastFrame = (float)(glfwGetTime());
             glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             // draw logic comes here
-            scene.update(deltaTime);
-            scene.render();
-            scene.draw();
+            for (auto scene : scenes)
+            {
+                scene->update(deltaTime);
+                scene->render();
+                scene->draw();
+            }
             glfwSwapBuffers(this->window);
             glfwPollEvents();
         }
     }
 
-    void update() {
+    void update()
+    {
+    }
 
+    void add(Scene *scene)
+    {
+        scenes.push_back(scene);
     }
 
 private:
     GLFWwindow *window;
+    vector<Scene *> scenes;
 };
