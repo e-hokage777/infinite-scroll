@@ -8,6 +8,8 @@
 #include "drawable.h"
 #include "texture.h"
 
+float accum = 0;
+
 class Sprite : public Drawable
 {
 public:
@@ -37,7 +39,7 @@ public:
 
     void Draw(Shader shader)
     {
-        this->update(0.0f);
+        // this->update(0.0f);
         shader.use();
         shader.setTexUnit(0, this->texture.ID, "sampler", GL_TEXTURE_2D);
         shader.setFloat("xOffset", this->xOffset);
@@ -49,12 +51,18 @@ public:
         glBindVertexArray(0);
     }
 
-    void update(float deltaTime)
+    void Update(float deltaTime)
     {
-        this->stateIndex = 8;
-        this->frameIndex = (this->frameIndex + 1) % 7;
-        this->xOffset = this->frameIndex * this->spriteWidth;
-        this->yOffset = this->stateIndex * this->spriteHeight;
+        if (accum >= 1 / 24.0f)
+        {
+            this->stateIndex = 0;
+            this->frameIndex = (this->frameIndex + 1) % 7;
+            this->xOffset = this->frameIndex * this->spriteWidth;
+            this->yOffset = this->stateIndex * this->spriteHeight;
+            accum = 0;
+        }
+
+        accum += deltaTime;
     }
 
 private:

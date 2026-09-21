@@ -4,6 +4,8 @@
 #include "logger.h"
 #include "scene.h"
 
+float lastFrame = 0;
+float deltaTime = 0;
 // TODO: see if you can make this a class member
 void framebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
@@ -47,6 +49,7 @@ public:
         }
 
         // configurations
+        glfwSwapInterval(1);
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -56,14 +59,21 @@ public:
     {
         while (!glfwWindowShouldClose(this->window))
         {
+            deltaTime = glfwGetTime() - lastFrame;
+            lastFrame = glfwGetTime();
             glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
             // draw logic comes here
+            scene.update(deltaTime);
             scene.render();
             scene.draw();
             glfwSwapBuffers(this->window);
             glfwPollEvents();
         }
+    }
+
+    void update() {
+
     }
 
 private:

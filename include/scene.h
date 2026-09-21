@@ -60,6 +60,12 @@ public:
         glEnable(GL_DEPTH_TEST);
     }
 
+    void update(float deltaTime){
+        for (auto object : objects){
+            object.drawable->Update(deltaTime);
+        }
+    }
+
 private:
     unsigned int framebuffer;
     unsigned int colorTexture;
