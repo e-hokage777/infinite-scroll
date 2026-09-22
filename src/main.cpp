@@ -20,6 +20,11 @@ void framebufferSizeCallback(GLFWwindow *window, int width, int height)
     scene.resize(width, height);
 }
 
+void processInput(GLFWwindow *window){
+    if(glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
+}
+
 int main()
 {
 
@@ -59,11 +64,13 @@ int main()
     Shader shader = Shader("shaders/main.vs", "shaders/main.fs");
     Shader spriteShader = Shader("shaders/sprite.vs", "shaders/sprite.fs");
     Plane plane = Plane(1.0f, 1.0f);
-    Sprite sprite = Sprite("assets/shadow_dog.png", 10, 12);
+    Sprite sprite = Sprite(40.0f, 40.0f,"assets/shadow_dog.png", 10, 12);
     scene.add({&sprite, spriteShader});
 
     while (!glfwWindowShouldClose(window))
     {
+        processInput(window);
+        
         deltaTime = (float)(glfwGetTime() - lastFrame);
         lastFrame = (float)(glfwGetTime());
         glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
