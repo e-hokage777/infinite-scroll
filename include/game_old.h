@@ -5,9 +5,14 @@
 #include "GLFW/glfw3.h"
 #include "logger.h"
 #include "scene.h"
-#include "input_manager.h"
 
+float lastFrame = 0;
+float deltaTime = 0;
 // TODO: see if you can make this a class member
+void framebufferSizeCallback(GLFWwindow *window, int width, int height)
+{
+    glViewport(0, 0, width, height);
+}
 
 // constants
 const int WIDTH = 800;
@@ -16,16 +21,11 @@ const int HEIGHT = 600;
 class Game
 {
 public:
-    InputManager inputManager;
     int width;
     int height;
-    float deltaTime = 0;
-    float lastFrame = 0;
 
     Game(int width = WIDTH, int height = HEIGHT) : width(width), height(height)
     {
-        // initializing variables
-        this->inputManager = InputManager();
         // setting up window
         glfwInit();
 
@@ -40,10 +40,8 @@ public:
             Logger::error("Failed to create GLFW window");
             glfwTerminate();
         }
-        glfwSetWindowUserPointer(window, this);
         glfwMakeContextCurrent(window);
-        glfwSetFramebufferSizeCallback(this->window, Game::framebufferSizeCallback);
-        glfwSetKeyCallback(this->window, Game::keyCallback);
+        glfwSetFramebufferSizeCallback(this->window, framebufferSizeCallback);
 
         // initializing glad
         if (!gladLoadGL(glfwGetProcAddress))
@@ -59,7 +57,7 @@ public:
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    void run()
+    void render()
     {
         while (!glfwWindowShouldClose(this->window))
         {
@@ -90,16 +88,5 @@ public:
 
 private:
     GLFWwindow *window;
-    // vector<Scene *> scenes;
-
-    static void framebufferSizeCallback(GLFWwindow *window, int width, int height)
-    {
-        glViewport(0, 0, width, height);
-    }
-
-    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
-    {
-        Game *game = static_cast<Game *>(glfwGetWindowUserPointer(window));
-        game->inputManager.handleKeyInput(key, action);
-    }
+    vector<Scene *> scenes;
 };

@@ -16,8 +16,6 @@ public:
     Texture texture;
     float width;
     float height;
-    float posX = 0.0f;
-    float posY = 0.0f;
     unsigned int states = 0;
     unsigned int maxFrames = 0;
     unsigned int stateIndex = 0;
@@ -26,12 +24,11 @@ public:
     float yOffset = 0.0f;
     float spriteWidth;
     float spriteHeight;
-    Plane plane;
-    
-    Sprite(){};
+
+    Sprite() {};
 
     Sprite(float width, float height, std::string path, unsigned int states, unsigned int maxFrames)
-        : plane(1.0f, 1.0f)
+
     {
         this->width = width;
         this->height = height;
@@ -49,12 +46,10 @@ public:
     {
         // this->update(0.0f);
         shader.use();
-        shader.uniformMat4("model", glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f));
+        // shader.uniformMat4("model", glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f));
         shader.setTexUnit(0, this->texture.ID, "sampler", GL_TEXTURE_2D);
         shader.setFloat("xOffset", this->xOffset);
         shader.setFloat("yOffset", this->yOffset);
-        // shader.setFloat("width", this->spriteWidth);
-        // shader.setFloat("height", this->spriteHeight);
         glBindVertexArray(this->VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
@@ -84,27 +79,11 @@ private:
         // define texture
         this->texture = Texture(path.c_str(), false);
 
-        // create plane
-        // defining vertices
-        // float vertices[] = {
-        //     // should should be vercies of a plane
-        //     -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 1.0f,  // top left
-        //     1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 1.0f,   // top right
-        //     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, // bottom left
-        //     1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f   // bottom right
-        // };
-        // float vertices[] = {
-        //     // should should be vercies of a plane
-        //     -1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset,                                         // top left
-        //     1.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset,                      // top right
-        //     -1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset + this->spriteHeight,                   // bottom left
-        //     1.0f, -1.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset + this->spriteHeight // bottom right
-        // };
         float vertices[] = {
             // should should be vercies of a plane
-            0.0f, this->height, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset,                                         // top left
-            this->width, this->height, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset,                      // top right
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset + this->spriteHeight,                   // bottom left
+            0.0f, this->height, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset,                                        // top left
+            this->width, this->height, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset,             // top right
+            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset + this->spriteHeight,                           // bottom left
             this->width, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset + this->spriteHeight // bottom right
         };
 
@@ -129,7 +108,7 @@ private:
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (sizeof(float) * 8), (void *)(sizeof(float) * 3));
         // vertex texture coords
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, TexCoords));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 6));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_STATIC_DRAW);
