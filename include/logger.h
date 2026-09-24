@@ -4,7 +4,9 @@
 class Logger
 {
 public:
-    static void info(const char *message) {}
+    static void info(const char *message) {
+        std::cout << message << std::endl;
+    }
     static void warning(const char *message) {}
     static void error(const char *message)
     {

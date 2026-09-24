@@ -16,10 +16,12 @@ public:
     Texture texture;
     float width;
     float height;
+    unsigned int state = 0;
     unsigned int states = 0;
     unsigned int maxFrames = 0;
-    unsigned int stateIndex = 0;
+    // unsigned int stateIndex = 0;
     unsigned int frameIndex = 0;
+    unsigned int frames;
     float xOffset = 0.0f;
     float yOffset = 0.0f;
     float spriteWidth;
@@ -36,7 +38,7 @@ public:
         this->maxFrames = maxFrames;
         this->spriteWidth = 1.0f / maxFrames;
         this->spriteHeight = 1.0f / states;
-        this->stateIndex = 0;
+        // this->stateIndex = 0;
         this->frameIndex = 0;
 
         initializeSprite(path);
@@ -44,12 +46,11 @@ public:
 
     void Draw(Shader shader)
     {
-        // this->update(0.0f);
         shader.use();
-        // shader.uniformMat4("model", glm::ortho(0.0f, 800.0f, 0.0f, 600.0f, -1.0f, 1.0f));
         shader.setTexUnit(0, this->texture.ID, "sampler", GL_TEXTURE_2D);
         shader.setFloat("xOffset", this->xOffset);
         shader.setFloat("yOffset", this->yOffset);
+
         glBindVertexArray(this->VAO);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         glBindVertexArray(0);
@@ -59,14 +60,19 @@ public:
     {
         if (accum >= 1 / 24.0f)
         {
-            this->stateIndex = 0;
-            this->frameIndex = (this->frameIndex + 1) % 7;
+            // this->state = 0;
+            this->frameIndex = (this->frameIndex + 1) % this->frames;
             this->xOffset = this->frameIndex * this->spriteWidth;
-            this->yOffset = this->stateIndex * this->spriteHeight;
+            this->yOffset = this->state * this->spriteHeight;
             accum = 0;
         }
 
         accum += deltaTime;
+    }
+
+    void setState(unsigned int state, unsigned int frames) {
+        this->state = state;
+        this->frames = frames;
     }
 
 private:
