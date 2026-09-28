@@ -59,6 +59,7 @@ public:
 
     void update(float deltaTime, InputManager *inputManager)
     {
+        this->state = State::IDLE;
         if (inputManager->isKeyDown(GLFW_KEY_D))
         {
             this->state = State::RUN;
