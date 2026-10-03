@@ -10,6 +10,8 @@
 #include "sprite.h"
 #include "shader.h"
 #include "player.h"
+#include "plane.h"
+#include "background.h"
 
 // TODO: see if you can make this a class member
 
@@ -25,9 +27,10 @@ public:
     int height;
     float deltaTime = 0;
     float lastFrame = 0;
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(SCREEN_WIDTH), 0.0f, static_cast<float>(SCREEN_HEIGHT), -1.0f, 1.0f);
+    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(SCREEN_WIDTH), 0.0f, static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f);
     // Scene scene;
     Player player;
+    Background background;
 
     Game(int width = SCREEN_WIDTH, int height = SCREEN_HEIGHT) : width(width), height(height)
     {
@@ -71,6 +74,9 @@ public:
         // configuring scene
         // scene = Scene(SCREEN_WIDTH, SCREEN_HEIGHT);
         Shader shader = Shader("shaders/main.vs", "shaders/main.fs");
+
+        // creating background
+        this->background = Background(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
     }
     
     void run()
@@ -85,15 +91,6 @@ public:
             lastFrame = (float)(glfwGetTime());
             glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            // draw logic comes here
-            // for (auto scene : scenes)
-            // {
-            //     scene->update(deltaTime);
-            //     scene->render();
-            //     scene->draw();
-            // }
-            // sprite.Update(this->deltaTime);
-            // sprite.Draw(spriteShader);
             this->update();
             this->render();
             glfwSwapBuffers(this->window);
@@ -109,6 +106,7 @@ public:
 
     void render()
     {
+        this->background.Draw(this->projection);
         this->player.render(this->projection);
                 
     }
