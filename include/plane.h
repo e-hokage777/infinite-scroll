@@ -17,7 +17,7 @@ public:
         glm::vec2 TexCoords;
     };
 
-    explicit Plane(){};
+    explicit Plane() {};
 
     explicit Plane(float x, float y, float z, float width, float height);
 

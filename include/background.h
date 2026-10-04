@@ -20,7 +20,7 @@ public:
         this->height = height;
         this->shader = Shader("shaders/basic.vs", "shaders/basic.fs");
         // projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height), 0.0f, -2.0f);
-        this->texture = Texture("assets/brickwall.jpg");
+        this->texture = Texture("assets/background/layer-4.png");
         plane = Plane(x, y, 0.0f, width, height);
     }
 
