@@ -13,22 +13,6 @@ void Plane::init()
     glGenBuffers(1, &VBO);
     glGenBuffers(1, &EBO);
 
-    // std::vector<Vertex> vertices = {
-    //     {{x, y, z}, {0.0f, 0.0f, 0.0f}, {0.0f, 0.0f}},
-    //     {{x + width, y, z}, {0.0f, 0.0f, 0.0f}, {1.0f, 0.0f}},
-    //     {{x, y + height, z}, {0.0f, 0.0f, 0.0f}, {0.0f, 1.0f}},
-    //     {{x + width, y + height, z}, {0.0f, 0.0f, 0.0f}, {1.0f, 1.0f}}};
-
-    //  positions = {
-    //     x, y, z,
-    //     x + width, y, z,
-    //     x, y + height, z,
-    //     x + width, y + height, z};
-    // positions = {
-    //     {x, y, z},
-    //     {x + width, y, z},
-    //     {x, y + height, z},
-    //     {x + width, y + height, z}};
 
     float positions[] = {
         x, y, z,
@@ -87,6 +71,10 @@ void Plane::init()
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+}
+
+void updateTexCoords(){
+    
 }
 
 void Plane::Draw(Shader shader)

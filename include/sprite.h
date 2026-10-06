@@ -85,13 +85,27 @@ private:
         // define texture
         this->texture = Texture(path.c_str(), false);
 
-        float vertices[] = {
-            // should should be vercies of a plane
-            0.0f, this->height, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset,                                        // top left
-            this->width, this->height, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset,             // top right
-            0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset, this->yOffset + this->spriteHeight,                           // bottom left
-            this->width, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, this->xOffset + this->spriteWidth, this->yOffset + this->spriteHeight // bottom right
+        float positions[] = {
+            0.0f, this->height, 0.0f,
+            this->width, this->height, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            this->width, 0.0f, 0.0f
         };
+
+        float normals[] = {
+            0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f
+        };
+
+        float texCoords[] = {
+            this->xOffset, this->yOffset,
+            this->xOffset + this->spriteWidth, this->yOffset,
+            this->xOffset, this->yOffset + this->spriteHeight,
+            this->xOffset + this->spriteWidth, this->yOffset + this->spriteHeight
+        };
+
 
         int indices[] = {
             0, 1, 3,
@@ -104,17 +118,20 @@ private:
         glBindVertexArray(this->VAO);
         glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
 
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), &vertices, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(positions) + sizeof(normals) + sizeof(texCoords), NULL, GL_DYNAMIC_DRAW);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(positions), positions);
+        glBufferSubData(GL_ARRAY_BUFFER, sizeof(positions), sizeof(normals), normals);
+        glBufferSubData(GL_ARRAY_BUFFER, sizeof(positions) + sizeof(normals), sizeof(texCoords), texCoords);
 
         // vertex positions
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, (sizeof(float) * 8), (void *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void *)0);
         // vertex normals
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, (sizeof(float) * 8), (void *)(sizeof(float) * 3));
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 3, (void *)(sizeof(positions)));
         // vertex texture coords
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 8, (void*)(sizeof(float) * 6));
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 2, (void *)(sizeof(positions) + sizeof(normals)));
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, this->EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), &indices, GL_STATIC_DRAW);

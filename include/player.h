@@ -2,8 +2,9 @@
 #include "glm/gtc/matrix_transform.hpp"
 #include "input_manager.h"
 #include "sprite.h"
+#include "character.h"
 
-class Player
+class Player : public Character
 {
 private:
     Shader shader;

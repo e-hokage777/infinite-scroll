@@ -3,7 +3,7 @@
 #include "shader.h"
 #include "glad/gl.h"
 
-class Background {
+class Background : public GameObject {
 public:
     float x, y, width, height;
     Shader shader;
