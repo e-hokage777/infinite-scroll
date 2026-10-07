@@ -13,8 +13,8 @@ class Shader
 public:
     unsigned int ID;
 
-    Shader(){}
-    
+    Shader() {}
+
     Shader(const char *vertexPath, const char *fragmentPath, const char *geometryPath = NULL)
     {
 
@@ -82,6 +82,39 @@ public:
         }
     }
 
+    void Compile(const char *vShaderCode, const char *fShaderCode, const char *gShaderCode = nullptr)
+    {
+
+        unsigned int vertex = compileShader(GL_VERTEX_SHADER, vShaderCode);
+        unsigned int fragment = compileShader(GL_FRAGMENT_SHADER, fShaderCode);
+        unsigned int geometry;
+
+        this->ID = glCreateProgram();
+        glAttachShader(this->ID, vertex);
+        glAttachShader(this->ID, fragment);
+
+        // geometry shader
+        if (gShaderCode != nullptr)
+        {
+            geometry = createShader(GL_GEOMETRY_SHADER, gShaderCode);
+            glAttachShader(this->ID, geometry);
+        }
+
+        glLinkProgram(this->ID);
+
+        int success;
+
+        glGetProgramiv(this->ID, GL_LINK_STATUS, &success);
+
+        if (!success)
+        {
+            char infoLog[512];
+            glGetProgramInfoLog(this->ID, 512, NULL, infoLog);
+            std::cout << "ERROR::SHADER::PROGRAM::LINKING_FAILED\n"
+                      << infoLog << std::endl;
+        }
+    }
+
     void use()
     {
         glUseProgram(this->ID);
@@ -97,7 +130,8 @@ public:
         glUniform3f(glGetUniformLocation(this->ID, name), vector.x, vector.y, vector.z);
     }
 
-    void uniformVec2(const char *name, glm::vec2 vector){
+    void uniformVec2(const char *name, glm::vec2 vector)
+    {
         glUniform2f(glGetUniformLocation(this->ID, name), vector.x, vector.y);
     }
 
@@ -111,11 +145,10 @@ public:
         glUniform1i(glGetUniformLocation(this->ID, name), value);
     }
 
-    void setBool(const char *name, bool value){
+    void setBool(const char *name, bool value)
+    {
         glUniform1i(glGetUniformLocation(this->ID, name), value);
     }
-
-    
 
     void setTexUnit(unsigned int index, unsigned int texture, const char *name, unsigned int type)
     {

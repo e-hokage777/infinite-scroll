@@ -2,6 +2,7 @@
 #include "plane.h"
 #include "shader.h"
 #include "glad/gl.h"
+#include "resource_manager.h"
 
 class Background : public GameObject {
 public:
@@ -20,7 +21,7 @@ public:
         this->height = height;
         this->shader = Shader("shaders/basic.vs", "shaders/basic.fs");
         // projection = glm::ortho(0.0f, static_cast<float>(width), 0.0f, static_cast<float>(height), 0.0f, -2.0f);
-        this->texture = Texture("assets/background/layer-4.png");
+        this->texture = ResourceManager::GetTexture("background-layer-4");
         plane = Plane(x, y, 0.0f, width, height);
     }
 

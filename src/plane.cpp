@@ -30,10 +30,10 @@ void Plane::init()
 
 
     float texCoords[] = {
-        0.0f, 0.0f,
-        1.0f, 0.0f,
         0.0f, 1.0f,
-        1.0f, 1.0f};
+        1.0f, 1.0f,
+        0.0f, 0.0f,
+        1.0f, 0.0f};
 
     std::vector<unsigned int> indices = {
         0, 1, 3,

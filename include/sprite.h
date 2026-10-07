@@ -7,6 +7,7 @@
 #include "shader.h"
 #include "drawable.h"
 #include "texture.h"
+#include "resource_manager.h"
 
 float accum = 0;
 
@@ -29,7 +30,7 @@ public:
 
     Sprite() {};
 
-    Sprite(float width, float height, std::string path, unsigned int states, unsigned int maxFrames)
+    Sprite(float width, float height, std::string name, unsigned int states, unsigned int maxFrames)
 
     {
         this->width = width;
@@ -41,7 +42,7 @@ public:
         // this->stateIndex = 0;
         this->frameIndex = 0;
 
-        initializeSprite(path);
+        initializeSprite(name);
     }
 
     void Draw(Shader shader)
@@ -80,10 +81,11 @@ private:
     unsigned int VBO;
     unsigned int EBO;
 
-    void initializeSprite(std::string path)
+    void initializeSprite(std::string name)
     {
         // define texture
-        this->texture = Texture(path.c_str(), false);
+        // this->texture = Texture(path.c_str(), false);
+        this->texture = ResourceManager::GetTexture(name);
 
         float positions[] = {
             0.0f, this->height, 0.0f,

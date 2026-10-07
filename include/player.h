@@ -39,7 +39,7 @@ public:
         this->x = x;
         this->y = y;
         this->shader = Shader("shaders/sprite.vs", "shaders/sprite.fs");
-        this->sprite = Sprite(40.0f, 40.0f, "assets/shadow_dog.png", 10, 12);
+        this->sprite = Sprite(40.0f, 40.0f, "shadow_dog", 10, 12);
 
         // setting up states
         this->states = {

@@ -8,13 +8,14 @@ class Texture
 {
 public:
     unsigned int ID;
-    int width;
-    int height;
     int nChannels;
+    unsigned int Internal_Format = GL_RGB; // potential for compile error
+    unsigned int Image_Format = GL_RGB; // potential for compile error
 
     // default constructor
     Texture() {}
-    Texture(const char *path, bool flip=true)
+
+    void Generate(int width, int height, unsigned char *data)
     {
         glGenTextures(1, &this->ID);
         glBindTexture(GL_TEXTURE_2D, this->ID);
@@ -23,26 +24,8 @@ public:
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
         glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        // loading texture data
-        stbi_set_flip_vertically_on_load(flip);
-        unsigned char *data = stbi_load(path, &this->width, &this->height, &this->nChannels, 0);
-
-        unsigned int format = GL_RGB;
-
-        if (this->nChannels == 4)
-        {
-            format = GL_RGBA;
-        }
-
-        if (data)
-        {
-            glTexImage2D(GL_TEXTURE_2D, 0, format, this->width, this->height, 0, format, GL_UNSIGNED_BYTE, data);
-            glGenerateMipmap(GL_TEXTURE_2D);
-        }
-        else
-        {
-            Logger::error("Failed to load texture");
-        }
-        stbi_image_free(data);
+        glTexImage2D(GL_TEXTURE_2D, 0, Internal_Format, width, height, 0, Image_Format, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
+        glBindTexture(GL_TEXTURE_2D, 0);
     }
 };

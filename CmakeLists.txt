@@ -2,7 +2,8 @@ cmake_minimum_required(VERSION 3.10)
 
 project(main VERSION 1.0 LANGUAGES C CXX)
 
-set(EXEC_SOURCES "src/main.cpp" "src/stb_image.cpp" "src/plane.cpp")
+# set(EXEC_SOURCES "src/main.cpp" "src/stb_image.cpp" "src/plane.cpp")
+file(GLOB EXEC_SOURCES "src/*.cpp")
 
 # ---------------------------------------------------------
 # 1. Configure and Fetch GLFW

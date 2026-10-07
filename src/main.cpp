@@ -12,6 +12,7 @@
 #include "player.h"
 #include "plane.h"
 #include "background.h"
+#include "resource_manager.h"
 
 // TODO: see if you can make this a class member
 
@@ -67,9 +68,15 @@ public:
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        // loading textures
+        ResourceManager::LoadTexture("assets/shadow_dog.png", true, "shadow_dog");
+        ResourceManager::LoadTexture("assets/background/layer-4.png", true, "background-layer-4");
+
+
         // attributes
         this->inputManager = InputManager();
         this->player = Player(0.0f, 0.0f);
+
         
         // configuring scene
         // scene = Scene(SCREEN_WIDTH, SCREEN_HEIGHT);
