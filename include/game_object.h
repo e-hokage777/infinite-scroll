@@ -16,5 +16,5 @@ public:
     virtual ~GameObject() = default;
 
     virtual void Draw() {};
-    virtual void update(float deltaTime){};
+    virtual void Update(){};
 };

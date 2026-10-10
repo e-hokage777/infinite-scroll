@@ -1,105 +1,20 @@
 #pragma once
 
 #include <vector>
-#include "glad/gl.h"
-#include "GLFW/glfw3.h"
-#include "logger.h"
-#include "scene.h"
-#include "input_manager.h"
-
-// TODO: see if you can make this a class member
-
-// constants
-const int WIDTH = 800;
-const int HEIGHT = 600;
+#include "resource_manager.h"
+#include "sprite_renderer.h"
+#include "game_object.h"
 
 class Game
 {
+
 public:
-    InputManager inputManager;
-    int width;
-    int height;
-    float deltaTime = 0;
-    float lastFrame = 0;
-
-    Game(int width = WIDTH, int height = HEIGHT) : width(width), height(height)
-    {
-        // initializing variables
-        this->inputManager = InputManager();
-        // setting up window
-        glfwInit();
-
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-
-        // creating window and setting context
-        this->window = glfwCreateWindow(WIDTH, HEIGHT, "game", NULL, NULL);
-        if (window == NULL)
-        {
-            Logger::error("Failed to create GLFW window");
-            glfwTerminate();
-        }
-        glfwSetWindowUserPointer(window, this);
-        glfwMakeContextCurrent(window);
-        glfwSetFramebufferSizeCallback(this->window, Game::framebufferSizeCallback);
-        glfwSetKeyCallback(this->window, Game::keyCallback);
-
-        // initializing glad
-        if (!gladLoadGL(glfwGetProcAddress))
-        {
-            Logger::error("Failed to initialize GLAD");
-            glfwTerminate();
-        }
-
-        // configurations
-        glfwSwapInterval(1);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
-
-    void run()
-    {
-        while (!glfwWindowShouldClose(this->window))
-        {
-            deltaTime = (float)(glfwGetTime() - lastFrame);
-            lastFrame = (float)(glfwGetTime());
-            glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            // draw logic comes here
-            for (auto scene : scenes)
-            {
-                scene->update(deltaTime);
-                scene->render();
-                scene->draw();
-            }
-            glfwSwapBuffers(this->window);
-            glfwPollEvents();
-        }
-    }
-
-    void update()
-    {
-    }
-
-    void add(Scene *scene)
-    {
-        scenes.push_back(scene);
-    }
+    // methods
+    static void Initialize() {}
+    static void Update() {}
+    static void Render() {}
 
 private:
-    GLFWwindow *window;
-    // vector<Scene *> scenes;
-
-    static void framebufferSizeCallback(GLFWwindow *window, int width, int height)
-    {
-        glViewport(0, 0, width, height);
-    }
-
-    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
-    {
-        Game *game = static_cast<Game *>(glfwGetWindowUserPointer(window));
-        game->inputManager.handleKeyInput(key, action);
-    }
+    // attributes
+    static std::vector<GameObject> gameObjects;
 };

@@ -1,143 +1,67 @@
 #pragma once
 
-#include <vector>
 #include "glad/gl.h"
 #include "GLFW/glfw3.h"
-#include "glm/gtc/matrix_transform.hpp"
 #include "logger.h"
-#include "scene.h"
-#include "input_manager.h"
-#include "sprite.h"
-#include "shader.h"
-#include "player.h"
-#include "plane.h"
-#include "background.h"
-#include "resource_manager.h"
+#include "game.h"
+#include "timer.h"
 
-// TODO: see if you can make this a class member
+int SCREEN_WIDTH = 800;
+int SCREEN_HEIGHT = 600;
 
-// constants
-const int SCREEN_WIDTH = 800;
-const int SCREEN_HEIGHT = 600;
-
-class Game
+void framebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
-public:
-    InputManager inputManager;
-    int width;
-    int height;
+    glViewport(0, 0, width, height);
+}
+
+int main()
+{
+    glfwInit();
+
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+
+    // creating window and setting context
+    GLFWwindow *window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "game", NULL, NULL);
+    if (window == NULL)
+    {
+        Logger::error("Failed to create GLFW window");
+        glfwTerminate();
+    }
+    // glfwSetWindowUserPointer(window, this);
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebufferSizeCallback);
+    // glfwSetKeyCallback(this->window, Game::keyCallback);
+
+    // initializing glad
+    if (!gladLoadGL(glfwGetProcAddress))
+    {
+        Logger::error("Failed to initialize GLAD");
+        glfwTerminate();
+    }
+
+    // configurations
+    glfwSwapInterval(1);
+    glEnable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+    //
+    Game::Initialize();
+
+    float lastTime = 0;
     float deltaTime = 0;
-    float lastFrame = 0;
-    glm::mat4 projection = glm::ortho(0.0f, static_cast<float>(SCREEN_WIDTH), 0.0f, static_cast<float>(SCREEN_HEIGHT), 0.0f, -1.0f);
-    // Scene scene;
-    Player player;
-    Background background;
-
-    Game(int width = SCREEN_WIDTH, int height = SCREEN_HEIGHT) : width(width), height(height)
+    float currentTime = 0;
+    while (!glfwWindowShouldClose(window))
     {
-        // initializing variables
-        // setting up window
-        glfwInit();
-        
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-        glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-        glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-        
-        // creating window and setting context
-        this->window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "game", NULL, NULL);
-        if (window == NULL)
-        {
-            Logger::error("Failed to create GLFW window");
-            glfwTerminate();
-        }
-        glfwSetWindowUserPointer(window, this);
-        glfwMakeContextCurrent(window);
-        glfwSetFramebufferSizeCallback(this->window, Game::framebufferSizeCallback);
-        glfwSetKeyCallback(this->window, Game::keyCallback);
-        
-        // initializing glad
-        if (!gladLoadGL(glfwGetProcAddress))
-        {
-            Logger::error("Failed to initialize GLAD");
-            glfwTerminate();
-        }
-        
-        // configurations
-        glfwSwapInterval(1);
-        glEnable(GL_DEPTH_TEST);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        // loading textures
-        ResourceManager::LoadTexture("assets/shadow_dog.png", true, "shadow_dog");
-        ResourceManager::LoadTexture("assets/background/layer-4.png", true, "background-layer-4");
-
-
-        // attributes
-        this->inputManager = InputManager();
-        this->player = Player(0.0f, 0.0f);
-
-        
-        // configuring scene
-        // scene = Scene(SCREEN_WIDTH, SCREEN_HEIGHT);
-        Shader shader = Shader("shaders/main.vs", "shaders/main.fs");
-
-        // creating background
-        this->background = Background(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
-    }
-    
-    void run()
-    {
-        Shader spriteShader = Shader("shaders/sprite.vs", "shaders/sprite.fs");
-        Sprite sprite = Sprite(40.0f, 40.0f, "assets/shadow_dog.png", 10, 12);
-        // scene.add({&sprite, spriteShader});
-
-        while (!glfwWindowShouldClose(this->window))
-        {
-            deltaTime = (float)(glfwGetTime() - lastFrame);
-            lastFrame = (float)(glfwGetTime());
-            glClearColor(0.0f, 0.3f, 0.3f, 1.0f);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-            this->update();
-            this->render();
-            glfwSwapBuffers(this->window);
-            glfwPollEvents();
-        }
+        currentTime = float(glfwGetTime());
+        deltaTime = currentTime - lastTime;
+        lastTime = currentTime;
+        Time::deltaTime = deltaTime;
+        Game::Update();
+        Game::Render();
     }
 
-
-    void update()
-    {
-        this->player.update(this->deltaTime, &this->inputManager);
-    }
-
-    void render()
-    {
-        this->background.Draw(this->projection);
-        this->player.render(this->projection);
-                
-    }
-
-private:
-    GLFWwindow *window;
-    // vector<Scene *> scenes;
-
-    static void framebufferSizeCallback(GLFWwindow *window, int width, int height)
-    {
-        glViewport(0, 0, width, height);
-    }
-
-    static void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
-    {
-        Game *game = static_cast<Game *>(glfwGetWindowUserPointer(window));
-        game->inputManager.handleKeyInput(key, action);
-    }
-};
-
-
-int main(){
-    Game game = Game();
-    game.run();
-    
     return 0;
 }
