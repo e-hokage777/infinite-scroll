@@ -1,20 +1,28 @@
+#pragma once
 #include "glm/gtc/matrix_transform.hpp"
 #include <string>
 #include "shader.h"
+#include "sprite_renderer.h"
+#include "texture.h"
 
 class GameObject
 {
 public:
-    glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 rotation = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
-    glm::vec2 size = glm::vec2(1.0f);
-    glm::mat4 modelMat = glm::mat4(1.0f);
-    std::string name = "GameObject";
+    glm::vec2 position;
+    float rotation;
+    glm::vec2 size;
+    glm::vec2 velocity;
+    glm::vec3 color;
+    bool isSolid;
+    bool isDestroyed;
+    glm::mat4 modelMat;
+    std::string name;
+    Texture sprite;
 
-    GameObject() {}
+    GameObject();
+    GameObject(glm::vec2 position, glm::vec2 size, Texture sprite, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f));
     virtual ~GameObject() = default;
 
-    virtual void Draw() {};
-    virtual void Update(){};
+    virtual void Draw();
+    virtual void Update();
 };

@@ -9,7 +9,8 @@
             "binaryDir": "${sourceDir}/out/build/${presetName}",
             "cacheVariables": {
                 "CMAKE_BUILD_TYPE": "Debug",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}"
+                "CMAKE_INSTALL_PREFIX": "${sourceDir}/out/install/${presetName}",
+                "Python_EXECUTABLE": "C:/Users/Eli/.pyenv/pyenv-win/versions/3.13.5/python.exe"
             }
         }
     ]

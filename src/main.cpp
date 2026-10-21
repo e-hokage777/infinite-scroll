@@ -5,6 +5,7 @@
 #include "logger.h"
 #include "game.h"
 #include "timer.h"
+#include "player.h"
 
 int SCREEN_WIDTH = 800;
 int SCREEN_HEIGHT = 600;
@@ -49,18 +50,27 @@ int main()
 
     //
     Game::Initialize();
+    Player player = Player();
+    player.sprite = ResourceManager::GetTexture("shadow_dog");
+    Game::AddGameObject(&player);
+
 
     float lastTime = 0;
     float deltaTime = 0;
     float currentTime = 0;
     while (!glfwWindowShouldClose(window))
     {
+        glClearColor(0.3f, 0.2f, 0.5f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         currentTime = float(glfwGetTime());
         deltaTime = currentTime - lastTime;
         lastTime = currentTime;
         Time::deltaTime = deltaTime;
         Game::Update();
         Game::Render();
+        
+        glfwSwapBuffers(window);
+        glfwPollEvents();
     }
 
     return 0;
