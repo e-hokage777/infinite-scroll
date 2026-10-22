@@ -4,7 +4,7 @@
 // variable definitions
 std::vector<GameObject *> Game::gameObjects;
 
-void Game::Initialize()
+void Game::Initialize(int width, int height)
 {
 
     // loading textures
@@ -19,6 +19,8 @@ void Game::Initialize()
     ResourceManager::LoadShader("shaders/basic.vs", "shaders/basic.fs", nullptr, "basic");
     ResourceManager::LoadShader("shaders/sprite.vs", "shaders/sprite.fs", nullptr, "sprite");
 
+    // setting transformation matrices
+    ResourceManager::GetShader("sprite").uniformMat4("projection", glm::ortho(0.0f, (float)width, 0.0f, (float)height));
 
     // initializing
     SpriteRenderer::Initialize();

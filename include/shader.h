@@ -122,31 +122,37 @@ public:
 
     void uniformMat4(const char *name, glm::mat4 matrix)
     {
+        this->use();
         glUniformMatrix4fv(glGetUniformLocation(this->ID, name), 1, GL_FALSE, glm::value_ptr(matrix));
     }
 
     void uniformVec3(const char *name, glm::vec3 vector)
     {
+        this->use();
         glUniform3f(glGetUniformLocation(this->ID, name), vector.x, vector.y, vector.z);
     }
 
     void uniformVec2(const char *name, glm::vec2 vector)
     {
+        this->use();
         glUniform2f(glGetUniformLocation(this->ID, name), vector.x, vector.y);
     }
 
     void setFloat(const char *name, float value)
     {
+        this->use();
         glUniform1f(glGetUniformLocation(this->ID, name), value);
     }
 
     void setInt(const char *name, int value)
     {
+        this->use();
         glUniform1i(glGetUniformLocation(this->ID, name), value);
     }
 
     void setBool(const char *name, bool value)
     {
+        this->use();
         glUniform1i(glGetUniformLocation(this->ID, name), value);
     }
 

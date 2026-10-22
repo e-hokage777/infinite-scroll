@@ -10,7 +10,7 @@ class Game
 
 public:
     // methods
-    static void Initialize();
+    static void Initialize(int width, int height);
     static void Update();
     static void Render();
     static void AddGameObject(GameObject *gameObject);

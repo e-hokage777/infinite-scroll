@@ -14,7 +14,7 @@ public:
     SpriteAnimation fall;
     SpriteAnimation run;
     
-    Player(glm::vec2 position, glm::vec2 size, Texture sprite, glm::vec3 color, glm::vec2 velocity);
+    Player(glm::vec2 position, glm::vec2 size, Texture sprite, glm::vec3 color = glm::vec3(1.0f), glm::vec2 velocity = glm::vec2(0.0f, 0.0f));
     Player();
 
     void Draw() override;

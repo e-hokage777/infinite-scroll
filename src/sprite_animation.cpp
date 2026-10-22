@@ -21,7 +21,12 @@ float SpriteAnimation::GetTotalDuration()
 
 void SpriteAnimator::Play(SpriteAnimation *animation)
 {
+    if (currentAnimation == animation)
+        return;
+
     currentAnimation = animation;
+    currentTime = 0.0f;
+    currentFrameIndex = 0;
 }
 
 void SpriteAnimator::Update(float deltaTime)

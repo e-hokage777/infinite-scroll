@@ -6,6 +6,7 @@
 #include "game.h"
 #include "timer.h"
 #include "player.h"
+#include "input_manager.h"
 
 int SCREEN_WIDTH = 800;
 int SCREEN_HEIGHT = 600;
@@ -13,6 +14,11 @@ int SCREEN_HEIGHT = 600;
 void framebufferSizeCallback(GLFWwindow *window, int width, int height)
 {
     glViewport(0, 0, width, height);
+}
+
+void keyCallback(GLFWwindow *window, int key, int scancode, int action, int mods)
+{
+    InputManager::handleKeyInput(key, action);
 }
 
 int main()
@@ -44,16 +50,16 @@ int main()
 
     // configurations
     glfwSwapInterval(1);
+    glfwSetKeyCallback(window, keyCallback);
     glEnable(GL_DEPTH_TEST);
     glEnable(GL_BLEND);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
     //
-    Game::Initialize();
-    Player player = Player();
-    player.sprite = ResourceManager::GetTexture("shadow_dog");
+    Game::Initialize(SCREEN_WIDTH, SCREEN_HEIGHT);
+    Player player = Player(glm::vec2(0.0f, 0.0f), glm::vec2(100.0f), ResourceManager::GetTexture("shadow_dog"));
+    // player.sprite = ResourceManager::GetTexture("shadow_dog");
     Game::AddGameObject(&player);
-
 
     float lastTime = 0;
     float deltaTime = 0;
@@ -68,7 +74,7 @@ int main()
         Time::deltaTime = deltaTime;
         Game::Update();
         Game::Render();
-        
+
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
