@@ -9,6 +9,9 @@ class Player : public GameObject
 {
 public:
     SpriteAnimator animator;
+    glm::vec2 acceleration;
+    glm::vec2 resistance;
+    glm::vec2 maxVelocity = glm::vec2(1000.0f);
     SpriteAnimation idle;
     SpriteAnimation jump;
     SpriteAnimation fall;

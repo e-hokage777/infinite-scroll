@@ -79,9 +79,9 @@ void SpriteRenderer::Draw(Texture sprite, glm::vec2 position, glm::vec2 size, fl
     model = glm::rotate(model, glm::radians(rotate), glm::vec3(0.0f, 0.0f, 1.0f));  // then rotate
     model = glm::translate(model, glm::vec3(-0.5f * size.x, -0.5f * size.y, 0.0f)); // move origin back // move origin of rotation to center of quad
     
-    // model = glm::translate(model, glm::vec3(0.5f * abs(size.x), 0.5f * size.y, 0.0f));   // move origin of rotation to center of quad
+    model = glm::translate(model, glm::vec3(0.5f * abs(size.x), 0.5f * size.y, 0.0f));   // move origin of rotation to center of quad
     model = glm::scale(model, glm::vec3(size, 1.0f));
-    // model = glm::translate(model, glm::vec3(-0.5f * abs(size.x), -0.5f * size.y, 0.0f)); // move origin back // move origin of rotation to center of quad
+    model = glm::translate(model, glm::vec3(-0.5f, -0.5f, 0.0f));
 
     shader.uniformMat4("model", model);
 
